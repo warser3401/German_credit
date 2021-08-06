@@ -1,0 +1,140 @@
+German_Credit<-as.data.frame(German_Credit)
+
+
+chkaccount <- German_Credit[,2]
+chkaccount <- as.factor(chkaccount)
+German_Credit[,2] <- chkaccount
+str(German_Credit)
+
+history <- German_Credit[,4]
+history <- as.factor(history)
+German_Credit[,4]<- history
+
+car <- German_Credit[,5]
+car <- as.factor(car)
+German_Credit[,5] <- car
+
+car <- German_Credit[,6]
+car <- as.factor(car)
+German_Credit[,6] <- car
+
+dum <-German_Credit[,7]
+dum <-as.factor(dum)
+German_Credit[,7] <- dum
+
+radio <- German_Credit[,8]
+radio <- as.factor(radio)
+German_Credit[,8] <- radio
+
+edu <- German_Credit[,9]
+edu <- as.factor(edu)
+German_Credit[,9]<- edu
+
+re <- German_Credit[,10]
+re <- as.factor(re)
+German_Credit[,10]<- re
+
+re <- German_Credit[,12]
+re <- as.factor(re)
+German_Credit[,12]<- re
+
+re <- German_Credit[,13]
+re <- as.factor(re)
+German_Credit[,13]<- re
+
+re <- German_Credit[,15]
+re <- as.factor(re)
+German_Credit[,15]<- re
+
+re <- German_Credit[,16]
+re <- as.factor(re)
+German_Credit[,16]<- re
+
+re <- German_Credit[,17]
+re <- as.factor(re)
+German_Credit[,17]<- re
+
+re <- German_Credit[,18]
+re <- as.factor(re)
+German_Credit[,18]<- re
+
+re <- German_Credit[,19]
+re <- as.factor(re)
+German_Credit[,19]<- re
+
+
+re <- German_Credit[,20]
+re <- as.factor(re)
+German_Credit[,20]<- re
+
+re <- German_Credit[,21]
+re <- as.factor(re)
+German_Credit[,21]<- re
+
+re <- German_Credit[,22]
+re <- as.factor(re)
+German_Credit[,22]<- re
+
+re <- German_Credit[,24]
+re <- as.factor(re)
+German_Credit[,24]<- re
+
+re <- German_Credit[,25]
+re <- as.factor(re)
+German_Credit[,25]<- re
+
+re <- German_Credit[,26]
+re <- as.factor(re)
+German_Credit[,26]<- re
+
+re <- German_Credit[,28]
+re <- as.factor(re)
+German_Credit[,28]<- re
+
+re <- German_Credit[,30]
+re <- as.factor(re)
+German_Credit[,30]<- re
+
+re <- German_Credit[,31]
+re <- as.factor(re)
+German_Credit[,31]<- re
+
+re <- German_Credit[,32]
+re <- as.factor(re)
+German_Credit[,32]<- re
+
+num_cols <- unlist(lapply(German_Credit, is.numeric))
+carnum <- German_Credit[ , num_cols]
+str(carnum)
+
+min <- apply(carnum, 2, min)
+max <- apply(carnum, 2, max)
+
+scaleddata <- as.data.frame(scale(carnum, center = min, scale = max - min))
+summary(scaleddata)
+
+
+
+data <- data.frame(scaleddata, German_Credit[!num_cols])
+data <- data[,-1]
+
+set.seed(123)
+indx<- sample(2, nrow(data), replace = T, prob = c(.7, .3))
+train <- data[indx ==1,]
+test<- data[indx ==2,]
+
+library(nnet)
+nn <- nnet(RESPONSE~., data = train, linout = F, size = 5, decay = .03)
+summary(nn)
+
+
+
+nnpred <-predict(nn, test)
+nnpred<-ifelse(nnpred>=.5,1,0)
+table(nnpred, test$RESPONSE)
+
+nn <- nnet(RESPONSE~., data = train, linout = F, size = 10, decay = .03)
+
+nnpred <-predict(nn, test)
+nnpred<-ifelse(nnpred>=.5,1,0)
+table(nnpred, test$RESPONSE)
